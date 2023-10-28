@@ -19,8 +19,8 @@ engine = create_engine('sqlite:///temp.db')
 Base = declarative_base()
 
 # Define the ChurnMetrics table (Fact Table)
-class ChurnMetrics(Base):
-    __tablename__ = "ChurnMetrics"
+class CustomerMetrics(Base):
+    __tablename__ = "CustomerMetrics"
 
     CustomerID = Column(Integer, primary_key=True)
     StateID = Column(Integer, ForeignKey('State.StateID'))
@@ -36,14 +36,14 @@ class ChurnMetrics(Base):
 class State(Base):
     __tablename__ = "State"
 
-    StateID = Column(Integer, primary_key=True)
+    StateID = Column(Integer, primary_key=True,autoincrement=True)
     StateName = Column(String)
 
 # Define the PlanDetails table
 class PlanDetails(Base):
     __tablename__ = "PlanDetails"
 
-    PlanID = Column(Integer, primary_key=True)
+    PlanID = Column(Integer, primary_key=True,autoincrement=True)
     AreaCode = Column(Integer)
     InternationalPlan = Column(String)
     VoiceMailPlan = Column(String)
@@ -53,7 +53,7 @@ class PlanDetails(Base):
 class DayUsage(Base):
     __tablename__ = "DayUsage"
 
-    DayUsageID = Column(Integer, primary_key=True)
+    DayUsageID = Column(Integer, primary_key=True,autoincrement=True)
     TotalDayMinutes = Column(Float)
     TotalDayCalls = Column(Integer)
     TotalDayCharge = Column(Float)
@@ -62,7 +62,7 @@ class DayUsage(Base):
 class EveUsage(Base):
     __tablename__ = "EveUsage"
 
-    EveUsageID = Column(Integer, primary_key=True)
+    EveUsageID = Column(Integer, primary_key=True,autoincrement=True)
     TotalEveMinutes = Column(Float)
     TotalEveCalls = Column(Integer)
     TotalEveCharge = Column(Float)
@@ -71,7 +71,7 @@ class EveUsage(Base):
 class NightUsage(Base):
     __tablename__ = "NightUsage"
 
-    NightUsageID = Column(Integer, primary_key=True)
+    NightUsageID = Column(Integer, primary_key=True,autoincrement=True)
     TotalNightMinutes = Column(Float)
     TotalNightCalls = Column(Integer)
     TotalNightCharge = Column(Float)
@@ -80,7 +80,7 @@ class NightUsage(Base):
 class IntlUsage(Base):
     __tablename__ = "IntlUsage"
 
-    IntlUsageID = Column(Integer, primary_key=True)
+    IntlUsageID = Column(Integer, primary_key=True,autoincrement=True)
     TotalIntlMinutes = Column(Float)
     TotalIntlCalls = Column(Integer)
     TotalIntlCharge = Column(Float)

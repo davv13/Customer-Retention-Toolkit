@@ -161,3 +161,4 @@ cython_debug/
 /schema_zapas.py
 /temp.db
 /telco_data.csv
+/data_subseting.py
