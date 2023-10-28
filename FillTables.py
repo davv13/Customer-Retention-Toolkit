@@ -1,5 +1,7 @@
 import pandas as pd 
 from etl.data_preperation.sql_interactions import  SqlHandler
+import os
+# os.chdir(".")
 
 df  = pd.read_csv("telecom_data.csv")
 

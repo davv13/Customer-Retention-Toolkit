@@ -6,10 +6,13 @@ import pandas as pd
 import random
 
 # test.py
-data = pd.read_csv('telecom_data.csv')
+# data = pd.read_csv('telecom_data.csv')
 if __name__ == "__main__":
     
     create_database()
     InsertToTables()
+
+   
+
 
     
