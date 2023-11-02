@@ -162,3 +162,4 @@ cython_debug/
 /temp.db
 /telco_data.csv
 /data_subseting.py
+/query.py
