@@ -4,7 +4,7 @@ from fastapi import FastAPI
 
 #Read the data
 
-data=pd.read_csv('api/api/telecom_data.csv')
+data=pd.read_csv('telecom_data.csv')
 
 #create instance called app
 app=FastAPI()
