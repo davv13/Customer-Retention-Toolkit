@@ -1,7 +1,9 @@
-from etl.data_preperation.schema import *
-from etl.data_preperation.sql_interactions import  SqlHandler
+from etl.db.schema import *
+from etl.db.sql_interactions import  SqlHandler
 from etl.logger import *
-from etl.data_preperation.FillTables import *
+# from etl.db.FillTables import *
+from FillTables import *
+
 from etl.api import app
 import pandas as pd
 import random
