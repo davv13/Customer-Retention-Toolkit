@@ -2,7 +2,7 @@
 
 import sqlite3
 import pandas as pd
-from etl.db.sql_interactions import SqlHandler
+from customer_retention_toolkit.db.sql_interactions import SqlHandler
 
 dbname = 'temp'
 table_names = ['State', 'PlanDetails', 'DayUsage', 'EveUsage', 'NightUsage', 'IntlUsage']

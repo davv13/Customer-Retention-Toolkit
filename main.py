@@ -1,10 +1,10 @@
-from etl.db.schema import *
-from etl.db.sql_interactions import  SqlHandler
-from etl.logger import *
-# from etl.db.FillTables import *
+from customer_retention_toolkit.db.schema import *
+from customer_retention_toolkit.db.sql_interactions import  SqlHandler
+from customer_retention_toolkit.logger import *
+# from customer_retention_toolkit.db.FillTables import *
 from FillTables import *
 
-from etl.api import app
+from customer_retention_toolkit.api import app
 import pandas as pd
 import random
 

@@ -163,3 +163,4 @@ cython_debug/
 /telco_data.csv
 /data_subseting.py
 /query.py
+/churn_prediction.ipynb

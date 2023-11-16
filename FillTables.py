@@ -1,5 +1,5 @@
 import pandas as pd 
-from etl.db.sql_interactions import  SqlHandler
+from customer_retention_toolkit.db.sql_interactions import  SqlHandler
 import os
 # os.chdir(".")
 
