@@ -85,6 +85,14 @@ class IntlUsage(Base):
     TotalIntlCalls = Column(Integer)
     TotalIntlCharge = Column(Float)
 
+class PredictionResults(Base):
+    __tablename__ = "PredictionResults"
+
+    PredictionID = Column(Integer, primary_key=True)
+    CustomerID = Column(String)
+    PredictedLabel = Column(String)
+    ModelName = Column(String)
+    ChurnStatus = Column(Integer,ForeignKey('CustomerMetrics.ChurnStatus'))
 # Create all tables
 def create_database():
     # Create all tables

@@ -164,3 +164,4 @@ cython_debug/
 /data_subseting.py
 /query.py
 /churn_prediction.ipynb
+/zibilanoc.py
