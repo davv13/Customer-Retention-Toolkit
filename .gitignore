@@ -166,3 +166,5 @@ cython_debug/
 /churn_prediction.ipynb
 /zibilanoc.py
 /data_manipulation.py
+customer_retention_toolkit/models/model_final.py
+/run_ml.py

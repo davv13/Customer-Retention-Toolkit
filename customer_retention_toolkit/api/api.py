@@ -1,10 +1,14 @@
 from fastapi import FastAPI, HTTPException
 import sqlite3
+import pandas as pd
 import logging
 #from ..logger import CustomFormatter
 import os
 from pydantic import BaseModel
 from typing import Any
+from ..models.MLWorkflow import MLWorkflow
+dbname = 'temp'
+ml_workflow = MLWorkflow(dbname)
 
 #create instance called app
 app=FastAPI()
@@ -123,70 +127,33 @@ async def update_record(update_request: UpdateRecordRequest):
         # Closing the database connection in the 'finally' block
         db.close()
 
+# ... (existing API code) ...
 
-# Columns: ['CustomerID', 'ChurnStatus', 'StateID', 'PlanID', 'DayUsageID', 'EveUsageID', 'NightUsageID', 'IntlUsageID', 'CustomerServiceCalls']
-# import sqlite3
+# Endpoint to predict churn based on CustomerID
+@app.get("/predict_churn/{CustomerID}")
+async def predict_churn(CustomerID: int):
+    try:
+        # Fetch data for the specific customer
+        with get_db() as db:
+            cursor = db.cursor()
+            cursor.execute(f"SELECT * FROM CustomerMetrics WHERE CustomerID = {CustomerID}")
+            customer_record = cursor.fetchone()
 
-# # Replace 'your_file.db' with the actual name of your .db file
-# db_file = 'temp.db'
-# table_name = 'CustomerMetrics'  # Replace with the actual name of the table
+        if customer_record is None:
+            raise HTTPException(status_code=404, detail="Customer not found")
 
-# # Connect to the SQLite database
-# connection = sqlite3.connect(db_file)
-# cursor = connection.cursor()
+        # Convert the record to a DataFrame
+        column_names = [description[0] for description in cursor.description]
+        customer_data = pd.DataFrame([customer_record], columns=column_names)
 
-# # Check if the table exists
-# cursor.execute(f"SELECT name FROM sqlite_master WHERE type='table' AND name='{table_name}';")
-# table_exists = cursor.fetchone()
+        # Preprocess the data as per your MLWorkflow requirements
+        # Note: Adjust the preprocessing if needed
+        preprocessed_data = ml_workflow.preprocess_data(customer_data)
 
-# if table_exists:
-#     # Fetch and print the contents of the specified table
-#     cursor.execute(f"SELECT * FROM {table_name};")
-#     rows = cursor.fetchall()
+        # Make a prediction
+        prediction = ml_workflow.predict(preprocessed_data)
 
-#     # Print column names
-#     column_names = [description[0] for description in cursor.description]
-#     print("Columns:", column_names)
+        return {"CustomerID": CustomerID, "ChurnPrediction": prediction[0]}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
-#     # Print data
-#     print(f"Data in the '{table_name}' table:")
-#     for row in rows:
-#         print(row)
-# else:
-#     print(f"The table '{table_name}' does not exist in the database.")
-
-# # Close the connection
-# connection.close()
-
-
-
-
-
-# @app.get("/get_info/")
-# def get_info(ID:int):
-#     """THis code is to get the id of a person from the data """
-#     info=data[data.id==ID].to_dict('records')
-#     return (info)
-
-
-
-# import sqlite3
-
-# # Replace 'your_file.db' with the actual name of your .db file
-# db_file = 'temp.db'
-
-# # Connect to the SQLite database
-# connection = sqlite3.connect(db_file)
-# cursor = connection.cursor()
-
-# # Fetch the list of tables
-# cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
-# tables = cursor.fetchall()
-
-# # Print the list of tables
-# print("Tables in the database:")
-# for table in tables:
-#     print(table[0])
-
-# # Close the connection
-# connection.close()
