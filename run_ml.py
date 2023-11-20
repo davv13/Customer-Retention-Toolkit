@@ -3,7 +3,6 @@ from customer_retention_toolkit.db.schema import *
 from customer_retention_toolkit.db.sql_interactions import SqlHandler
 from customer_retention_toolkit.logger import *
 from FillTables import *
-from customer_retention_toolkit.models.Prediction_Model import *
 from customer_retention_toolkit.models.model_final import (
     load_data_from_db,
     preprocess_data,
@@ -20,12 +19,13 @@ import random
 
 def run_ml_workflow(dbname='temp', table_name='PredictionResults'):
     # Load and preprocess data
-    data = load_data_from_db(dbname)
+    table_names = ['State', 'PlanDetails', 'DayUsage', 'EveUsage', 'NightUsage', 'IntlUsage', 'CustomerMetrics']
+    data = load_data_from_db(dbname,table_names)
     data = preprocess_data(data)
     print("Columns in data after preprocessing:", data.columns)
 
     # Split data into training and testing sets
-    X_train, X_test, y_train, y_test = split_data(data)
+    X_train, X_test, y_train, y_test = split_data(data,target="ChurnStatus")
 
     # Train models
     models = {
@@ -55,6 +55,6 @@ def run_ml_workflow(dbname='temp', table_name='PredictionResults'):
     best_model_predictions = best_model.predict(X_test)
 
     # Save predictions to database
-    save_predictions_to_db(X_test, best_model_predictions, best_model_name, dbname, table_name)
+    save_predictions_to_db(X_test, y_test,best_model_predictions, best_model_name, dbname, table_name)
 
     return model_metrics
