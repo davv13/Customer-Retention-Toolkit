@@ -7,8 +7,7 @@ import os
 from pydantic import BaseModel
 from typing import Any
 from ..models.MLWorkflow import MLWorkflow
-dbname = 'temp'
-ml_workflow = MLWorkflow(dbname)
+
 
 #create instance called app
 app=FastAPI()
@@ -51,7 +50,7 @@ async def get_record(CustomerID: int):
 
 
 #Defining a Pydantic model for the data
-class CreatemovieRequest(BaseModel):
+class UserRequest(BaseModel):
     CustomerID: int
     ChurnStatus: str
     StateID: int
@@ -66,7 +65,7 @@ class CreatemovieRequest(BaseModel):
 # Columns: ['CustomerID', 'ChurnStatus', 'StateID', 'PlanID', 'DayUsageID', 'EveUsageID', 'NightUsageID', 'IntlUsageID', 'CustomerServiceCalls']
 
 @app.post("/create_data")
-async def create_record(new_data: CreatemovieRequest):
+async def create_record(new_data: UserRequest):
     try:
         # Opening a database connection using the get_db function
         db = get_db()
@@ -106,6 +105,7 @@ class UpdateRecordRequest(BaseModel):
 
 @app.put("/update_data")
 async def update_record(update_request: UpdateRecordRequest):
+    
     try:
         # Opening a database connection using the get_db function
         db = get_db()
@@ -127,33 +127,18 @@ async def update_record(update_request: UpdateRecordRequest):
         # Closing the database connection in the 'finally' block
         db.close()
 
-# ... (existing API code) ...
-
-# Endpoint to predict churn based on CustomerID
 @app.get("/predict_churn/{CustomerID}")
 async def predict_churn(CustomerID: int):
+    dbname = 'temp'
+    ml_workflow = MLWorkflow(dbname)
+    ml_workflow.run_workflow(['State', 'PlanDetails', 'DayUsage', 'EveUsage', 'NightUsage', 'IntlUsage', 'CustomerMetrics']) 
     try:
-        # Fetch data for the specific customer
-        with get_db() as db:
-            cursor = db.cursor()
-            cursor.execute(f"SELECT * FROM CustomerMetrics WHERE CustomerID = {CustomerID}")
-            customer_record = cursor.fetchone()
+        # Use MLWorkflow to predict churn for the given CustomerID
+        prediction, error = ml_workflow.predict_for_customer(CustomerID)
 
-        if customer_record is None:
-            raise HTTPException(status_code=404, detail="Customer not found")
+        if error:
+            raise HTTPException(status_code=404, detail=error)
 
-        # Convert the record to a DataFrame
-        column_names = [description[0] for description in cursor.description]
-        customer_data = pd.DataFrame([customer_record], columns=column_names)
-
-        # Preprocess the data as per your MLWorkflow requirements
-        # Note: Adjust the preprocessing if needed
-        preprocessed_data = ml_workflow.preprocess_data(customer_data)
-
-        # Make a prediction
-        prediction = ml_workflow.predict(preprocessed_data)
-
-        return {"CustomerID": CustomerID, "ChurnPrediction": prediction[0]}
+        return {"CustomerID": CustomerID, "ChurnPrediction": prediction}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
