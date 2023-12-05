@@ -2,37 +2,51 @@ from fastapi import FastAPI, HTTPException
 import sqlite3
 import pandas as pd
 import logging
-#from ..logger import CustomFormatter
 import os
 from pydantic import BaseModel
 from typing import Any
 from ..models.MLWorkflow import MLWorkflow
 
+app = FastAPI()
 
-#create instance called app
-app=FastAPI()
-
-    
 logger = logging.getLogger(os.path.basename(__file__))
 logger.setLevel(logging.DEBUG)
 ch = logging.StreamHandler()
 ch.setLevel(logging.DEBUG)
-#ch.setFormatter(CustomFormatter())
+# ch.setFormatter(CustomFormatter())
 logger.addHandler(ch)
 
-# Defining a function to open a connection to our SQLite database
 def get_db():
+    """
+    Creates and returns a connection to the SQLite database.
+
+    Returns:
+        sqlite3.Connection: The connection to the SQLite database.
+    """
     db = sqlite3.connect('temp.db')
     return db
 
 @app.get("/")
 async def root():
+    """
+    Root endpoint for the FastAPI application.
+
+    Returns:
+        dict: A dictionary with a welcome message.
+    """
     return {"message": "Initializing"}
-
-
 
 @app.get("/get_data/{CustomerID}")
 async def get_record(CustomerID: int):
+    """
+    Fetches a record from the CustomerMetrics table based on CustomerID.
+
+    Args:
+        CustomerID (int): The ID of the customer to fetch.
+
+    Returns:
+        dict: A dictionary containing the customer's data or an error message if not found.
+    """
     # Open a connection to the database
     with get_db() as db:
         cursor = db.cursor()
@@ -48,9 +62,21 @@ async def get_record(CustomerID: int):
     record_dict = dict(zip(column_names, record))
     return record_dict
 
-
-#Defining a Pydantic model for the data
 class UserRequest(BaseModel):
+    """
+    Pydantic model representing a user request for creating a record in the CustomerMetrics table.
+
+    Attributes:
+        CustomerID (int): The customer's ID.
+        ChurnStatus (str): The churn status of the customer.
+        StateID (int): The state ID associated with the customer.
+        PlanID (int): The plan ID associated with the customer.
+        DayUsageID (int): The day usage ID associated with the customer.
+        EveUsageID (int): The evening usage ID associated with the customer.
+        NightUsageID (int): The night usage ID associated with the customer.
+        IntlUsageID (int): The international usage ID associated with the customer.
+        CustomerServiceCalls (int): The number of customer service calls made by the customer.
+    """
     CustomerID: int
     ChurnStatus: str
     StateID: int
@@ -61,11 +87,17 @@ class UserRequest(BaseModel):
     IntlUsageID: int
     CustomerServiceCalls: int
 
-
-# Columns: ['CustomerID', 'ChurnStatus', 'StateID', 'PlanID', 'DayUsageID', 'EveUsageID', 'NightUsageID', 'IntlUsageID', 'CustomerServiceCalls']
-
 @app.post("/create_data")
 async def create_record(new_data: UserRequest):
+    """
+    Creates a new record in the CustomerMetrics table.
+
+    Args:
+        new_data (UserRequest): The data to be inserted into the table.
+
+    Returns:
+        dict: A message indicating the success or failure of the operation.
+    """
     try:
         # Opening a database connection using the get_db function
         db = get_db()
@@ -76,7 +108,7 @@ async def create_record(new_data: UserRequest):
         INSERT INTO CustomerMetrics (
             CustomerID, ChurnStatus, StateID, PlanID, DayUsageID, EveUsageID, NightUsageID ,IntlUsageID, CustomerServiceCalls
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
         """
 
         # Executing the insert query with the data from the new_data parameter
@@ -97,15 +129,30 @@ async def create_record(new_data: UserRequest):
         # Closing the database connection in the 'finally' block
         db.close()
 
-
 class UpdateRecordRequest(BaseModel):
-    column_name: str  # The type that column gets
-    new_value: Any # As it can be both integer and str, defined as Any. Later can find better solution
-    CustomerID: int  # The type that the CustomerID is
+    """
+    Pydantic model representing a request to update a record in the CustomerMetrics table.
+
+    Attributes:
+        column_name (str): The name of the column to be updated.
+        new_value (Any): The new value to be set for the column.
+        CustomerID (int): The ID of the customer whose record is to be updated.
+    """
+    column_name: str
+    new_value: Any
+    CustomerID: int
 
 @app.put("/update_data")
 async def update_record(update_request: UpdateRecordRequest):
-    
+    """
+    Updates a record in the CustomerMetrics table based on the provided update request.
+
+    Args:
+        update_request (UpdateRecordRequest): The request containing the update details.
+
+    Returns:
+        dict: A message indicating the success or failure of the operation.
+    """
     try:
         # Opening a database connection using the get_db function
         db = get_db()
@@ -129,6 +176,15 @@ async def update_record(update_request: UpdateRecordRequest):
 
 @app.get("/predict_churn/{CustomerID}")
 async def predict_churn(CustomerID: int):
+    """
+    Predicts churn for a given customer ID using a machine learning workflow.
+
+    Args:
+        CustomerID (int): The ID of the customer for whom churn is to be predicted.
+
+    Returns:
+        dict: A dictionary containing the CustomerID and the churn prediction.
+    """
     dbname = 'temp'
     ml_workflow = MLWorkflow(dbname)
     ml_workflow.run_workflow(['State', 'PlanDetails', 'DayUsage', 'EveUsage', 'NightUsage', 'IntlUsage', 'CustomerMetrics']) 
