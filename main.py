@@ -5,7 +5,6 @@ from customer_retention_toolkit.db.sql_interactions import  SqlHandler
 from customer_retention_toolkit.logger import *
 from FillTables import *
 from customer_retention_toolkit.models.MLWorkflow import MLWorkflow
-from run_ml import run_ml_workflow
 from customer_retention_toolkit.api import app
 
 # Configure the logger
