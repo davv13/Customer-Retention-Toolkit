@@ -44,7 +44,7 @@ class CustomerMetrics(Base):
     NightUsageID = Column(Integer, ForeignKey('NightUsage.NightUsageID'))
     IntlUsageID = Column(Integer, ForeignKey('IntlUsage.IntlUsageID'))
     CustomerServiceCalls = Column(Integer)
-    ChurnStatus = Column(String)
+    ChurnStatus = Column(Integer)
 
 class State(Base):
     """

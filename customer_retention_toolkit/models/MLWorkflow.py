@@ -7,6 +7,7 @@ from sklearn.metrics import accuracy_score, classification_report, confusion_mat
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.impute import SimpleImputer
 from customer_retention_toolkit.db.sql_interactions import SqlHandler
 from ..logger.logger import CustomFormatter,logging
 
@@ -73,6 +74,8 @@ class MLWorkflow:
         categorical_columns = df_comb.select_dtypes(include=['object']).columns.tolist()
         categorical_columns = [col for col in categorical_columns if col not in exclude_columns]
         df_comb = pd.get_dummies(df_comb, columns=categorical_columns, drop_first=True, dtype=int)
+        imputer = SimpleImputer(strategy='most_frequent')  # or use 'median' or 'most_frequent'
+        df_comb = pd.DataFrame(imputer.fit_transform(df_comb), columns=df_comb.columns)
         return df_comb
 
     def split_data(self, df_comb: pd.DataFrame, target: str = 'ChurnStatus') -> tuple:
@@ -126,7 +129,7 @@ class MLWorkflow:
             'Classification Report': classification_rep
         }
 
-    def predictpredict(self, X: pd.DataFrame) -> np.ndarray:
+    def predict(self, X: pd.DataFrame) -> np.ndarray:
         """
         Makes predictions using the trained RandomForestClassifier model.
 
@@ -237,8 +240,21 @@ class MLWorkflow:
         # Ensure the columns are in the same order as during training
         df_customer_processed = df_customer_processed[self.trained_columns]
 
+        # # Make a prediction using the trained model
+        # prediction = self.model.predict(df_customer_processed)
+
+        # # Return the prediction
+        # return prediction[0], None  # Assuming prediction is a numpy array and you want the first element
         # Make a prediction using the trained model
         prediction = self.model.predict(df_customer_processed)
 
+        # Convert numpy.int64 to int (or use int(prediction[0]) if prediction is a single-value array)
+        if isinstance(prediction, np.ndarray) and prediction.shape:
+            # Assuming prediction is a 1D array with a single element
+            prediction = int(prediction[0])
+        else:
+            # If prediction is a scalar
+            prediction = int(prediction)
+
         # Return the prediction
-        return prediction[0], None  # Assuming prediction is a numpy array and you want the first element
+        return prediction, None

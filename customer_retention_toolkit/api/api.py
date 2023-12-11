@@ -78,7 +78,7 @@ class UserRequest(BaseModel):
         CustomerServiceCalls (int): The number of customer service calls made by the customer.
     """
     CustomerID: int
-    ChurnStatus: str
+    ChurnStatus: int
     StateID: int
     PlanID: int
     DayUsageID: int

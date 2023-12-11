@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 import random
 from customer_retention_toolkit.db.schema import *
 from customer_retention_toolkit.db.sql_interactions import  SqlHandler
