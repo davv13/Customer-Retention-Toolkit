@@ -1,4 +1,3 @@
-```markdown
 ## **Setup and Configuration**
 
 Follow these steps to set up and run the package:
@@ -33,5 +32,5 @@ For comprehensive documentation on the project, including step-by-step guides an
 
 In the competitive world of subscription services, customer retention is key to sustained business success. High churn rates can significantly impact revenue and growth. This project aims to tackle churn by predicting which customers may leave using advanced analytics and machine learning, based on their interaction history and engagement patterns. 
 
-Our detailed [MkDocs documentation](https://davv13.github.io/MkDocs-/) on GitHub Pages outlines our analytical process and model utilization, providing a transparent guide to applying these insights to real-world scenarios.
-```
+
+
