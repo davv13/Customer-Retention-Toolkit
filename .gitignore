@@ -168,4 +168,3 @@ cython_debug/
 /data_manipulation.py
 customer_retention_toolkit/models/model_final.py
 /run_ml.py
-/setup.py

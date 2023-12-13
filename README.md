@@ -1,5 +1,10 @@
 ## **Setup and Configuration**
 
+For installing the package, run the following: 
+ ```python
+pip install customer_retention_toolkit
+```
+
 Follow these steps to set up and run the package:
 
 1. Create a new virtual environment:
@@ -10,7 +15,7 @@ Follow these steps to set up and run the package:
    ```python
    pip install -r requirements.txt
    ```
-3. Execute the code cells in `example.ipynb`.
+3.For demo purposes, execute the code cells in `example.ipynb`.
 
 When you get to the API section:
 
